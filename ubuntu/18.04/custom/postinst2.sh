@@ -14,6 +14,7 @@ $UBUNTU_USER ALL=NOPASSWD:  ALL
 
 ############ ZT
 
+sleep 5 # get it time to connect
 zerotier-cli listnetworks | grep $ZTNET || {
 
 apt update
@@ -97,7 +98,7 @@ zerotier-cli listnetworks
 
 ########### MATE
 
-dpkg -l | grep mate-desktop-environment -q || {
+dpkg --get-selections| grep ubuntu-mate-desktop -q || {
 
 echo .
 echo ..
@@ -111,7 +112,7 @@ sudo apt install tasksel
 sudo tasksel install ubuntu-mate-desktop
 echo "REBOOT in 10 sec"
 sleep 10
-reboot
+#reboot
 }
 
 usermod -aG adm,audio,cdrom,dip,sudo,plugdev,video $UBUNTU_USER
