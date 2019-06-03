@@ -8,6 +8,10 @@ echo ===============
 
 . /etc/postinst.var
 
+sudo apt-get -f install
+sudo apt-get -f install
+sudo apt-get -f install
+
 test -f /etc/sudoers.d/ubuntu-nopasswd || echo "
 $UBUNTU_USER ALL=NOPASSWD:  ALL
 " > /etc/sudoers.d/ubuntu-nopasswd
