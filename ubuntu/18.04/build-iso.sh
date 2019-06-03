@@ -10,6 +10,8 @@ set -e
 SSH_PUBLIC_KEY_FILE=${1:-"$HOME/.ssh/id_rsa.pub"}
 TARGET_ISO=${2:-"`pwd`/ubuntu-18.04-netboot-amd64-unattended.iso"}
 
+. custom/postinst.var
+
 # check if ssh key exists
 if [ ! -f "$SSH_PUBLIC_KEY_FILE" ];
 then
@@ -25,9 +27,24 @@ TMP_DISC_DIR="`mktemp -d`"
 TMP_INITRD_DIR="`mktemp -d`"
 
 # download and extract netboot iso
-SOURCE_ISO_URL="http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso"
-cd "$TMP_DOWNLOAD_DIR"
-wget -4 "$SOURCE_ISO_URL" -O "./netboot.iso"
+SOURCE_ISO_URL="http://$COUNTRY.archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso"
+
+REQUIRED_SIZE=`curl -I $SOURCE_ISO_URL -Ss  | grep Content-Length: | head -n1 | grep -oP '\d+' `
+DETECTED_SIZE=`du -b ./netboot.iso  2>/dev/null | cut -f1`
+
+if [ "$REQUIRED_SIZE" == "$DETECTED_SIZE" ]
+then    echo "= considered ISO downloaded ( ./netboot.iso is of size $DETECTED_SIZE)"
+else    if curl -o ./netboot.iso -L $SOURCE_ISO_URL
+        then    :
+        else    rm ./netboot.iso
+                exit 2
+        fi
+fi
+
+
+
+#cd "$TMP_DOWNLOAD_DIR"
+#wget -4 "$SOURCE_ISO_URL" -O "./netboot.iso"
 "$BIN_7Z" x "./netboot.iso" "-o$TMP_DISC_DIR"
 
 # patch boot menu
@@ -38,9 +55,15 @@ patch -p1 -i "$SCRIPT_DIR/custom/boot-menu.patch"
 # prepare assets
 cd "$TMP_INITRD_DIR"
 mkdir "./custom"
-cp "$SCRIPT_DIR/custom/preseed.cfg" "./preseed.cfg"
+cat "$SCRIPT_DIR/custom/preseed.cfg" | sed "
+    s#__UBUNTU_HOSTNAME__#$UBUNTU_HOSTNAME#; 
+    s#__UBUNTU_USER__#$UBUNTU_USER#; 
+    s#__PWHASH__#$PWHASH#;
+    s#__COUNTRY__#$COUNTRY#;
+    " > "./preseed.cfg"
 cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
 cp "$SCRIPT_DIR/custom/ssh-host-keygen.service" "./custom/ssh-host-keygen.service"
+cp "$SCRIPT_DIR/custom/postinst2.sh" "$SCRIPT_DIR/custom/postinst.var" "./custom/"
 
 # append assets to initrd image
 cd "$TMP_INITRD_DIR"
