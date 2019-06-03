@@ -103,16 +103,18 @@ dpkg --get-selections| grep ubuntu-mate-desktop -q || {
 echo .
 echo ..
 echo ...
-echo "mate installation, please wait up ~ 15 minutes"
+echo "mate installation, please wait up to ~ 15 minutes"
 echo .
 echo ..
 echo ...
 export DEBIAN_FRONTEND=noninteractive
 sudo apt install tasksel
-sudo tasksel install ubuntu-mate-desktop
+sudo tasksel install ubuntu-mate-desktop ; sudo apt-get -f install
+sudo tasksel install ubuntu-mate-desktop ; sudo apt-get -f install
+sudo tasksel install ubuntu-mate-desktop ; sudo apt-get -f install
 echo "REBOOT in 10 sec"
 sleep 10
-#reboot
+reboot
 }
 
 usermod -aG adm,audio,cdrom,dip,sudo,plugdev,video $UBUNTU_USER
