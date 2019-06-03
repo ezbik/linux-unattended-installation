@@ -1,4 +1,5 @@
 UBUNTU_USER=cp
+# get it with: printf plain_text_pw  | mkpasswd -s -m sha-256
 PWHASH='$5$RjELUNvxr$i8utgL72KWd.ua2C4.5ZXF3oT2Hj.z/MRW3DKwDU5c2'
 UBUNTU_HOSTNAME=go.com
 ZTNET=8286ac0e473a3477
