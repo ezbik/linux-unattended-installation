@@ -60,6 +60,8 @@ cat "$SCRIPT_DIR/custom/preseed.cfg" | sed "
     s#__UBUNTU_USER__#$UBUNTU_USER#; 
     s#__PWHASH__#$PWHASH#;
     s#__COUNTRY__#$COUNTRY#;
+    s#__WIFI_NAME__#$WIFI_NAME#;
+    s#__WIFI_PASS__#$WIFI_PASS#;
     " > "./preseed.cfg"
 cp "$SSH_PUBLIC_KEY_FILE" "./custom/userkey.pub"
 cp "$SCRIPT_DIR/custom/ssh-host-keygen.service" "./custom/ssh-host-keygen.service"

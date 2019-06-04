@@ -16,6 +16,24 @@ test -f /etc/sudoers.d/ubuntu-nopasswd || echo "
 $UBUNTU_USER ALL=NOPASSWD:  ALL
 " > /etc/sudoers.d/ubuntu-nopasswd
 
+############ Wifi
+
+# Conditions met: no internet; Network-Manager installed; Wifi device detected
+
+if ! ping -c 3 1.1.1.1
+then
+    if command -v nmcli && nmcli dev | grep wifi 
+    then
+        # cant ping google, resetup wifi
+        nmcli con del __WIFI_NAME__
+        nmcli dev wifi connect __WIFI_NAME__ password __WIFI_PASS__
+    fi
+fi
+
+nmcli con
+
+############ Wifi
+
 ############ ZT
 
 sleep 5 # get it time to connect
