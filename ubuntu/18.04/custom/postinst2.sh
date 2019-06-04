@@ -36,8 +36,7 @@ nmcli con
 
 ############ ZT
 
-sleep 5 # get it time to connect
-zerotier-cli listnetworks | grep $ZTNET || {
+test -f /var/lib/zerotier-one/networks.d/$ZTNET.conf  || {
 
 apt update
 apt install -y gnupg
@@ -120,7 +119,7 @@ zerotier-cli listnetworks
 
 ########### MATE
 
-dpkg --get-selections| grep ubuntu-mate-desktop -q || {
+dpkg --get-selections 2>/dev/null | grep ubuntu-mate-desktop -q || {
 
 echo .
 echo ..
